@@ -21,11 +21,24 @@ resource "aws_s3_bucket" "strapi_storage" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "s3_access" {
+resource "aws_s3_bucket_ownership_controls" "s3_controls" {
   bucket = aws_s3_bucket.strapi_storage.id
-  block_public_acls = false
-  ignore_public_acls = false
-  block_public_policy = true
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "s3_acl" {
+  depends_on = [aws_s3_bucket_ownership_controls.s3_controls]
+  bucket     = aws_s3_bucket.strapi_storage.id
+  acl        = "public-read"
+}
+
+resource "aws_s3_bucket_public_access_block" "s3_access" {
+  bucket                  = aws_s3_bucket.strapi_storage.id
+  block_public_acls       = false
+  ignore_public_acls      = false
+  block_public_policy     = true
   restrict_public_buckets = true
 }
 
