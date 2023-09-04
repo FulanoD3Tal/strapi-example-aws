@@ -11,17 +11,13 @@ export default ({ env }) => [
             "'self'",
             "data:",
             "blob:",
-            `https://${env("AWS_BUCKET_NAME")}.s3.${env(
-              "AWS_REGION"
-            )}.amazonaws.com`,
+            `https://${env("AWS_BUCKET_NAME")}.s3.amazonaws.com`,
           ],
           "media-src": [
             "'self'",
             "data:",
             "blob:",
-            `https://${env("AWS_BUCKET_NAME")}.s3.${env(
-              "AWS_REGION"
-            )}.amazonaws.com`,
+            `https://${env("AWS_BUCKET_NAME")}.s3.amazonaws.com`,
           ],
           upgradeInsecureRequests: null,
         },
