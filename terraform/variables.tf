@@ -21,3 +21,13 @@ variable "ssh-location" {
   type        = string
   description = "location of the ssh public key to connect to ec2 instance"
 }
+
+variable "aws_access_key_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "aws_access_secret" {
+  type      = string
+  sensitive = true
+}

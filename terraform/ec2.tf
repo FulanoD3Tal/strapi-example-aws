@@ -70,20 +70,31 @@ resource "aws_security_group_rule" "egress" {
 
 resource "aws_key_pair" "ssh_key_pair" {
   key_name   = "strapi_ssh_key"
-  public_key = file(var.ssh-location)
+  public_key = var.ssh-location
 }
 
 
 resource "aws_instance" "strapi_server" {
-  ami             = data.aws_ami.ubuntu_ami.id
-  instance_type   = "t3.small"
-  key_name        = aws_key_pair.ssh_key_pair.key_name
-  subnet_id       = aws_subnet.public_subnet_1.id
-  security_groups = [aws_security_group.strapi_server_sg.id]
-
+  ami                    = data.aws_ami.ubuntu_ami.id
+  instance_type          = "t3.small"
+  key_name               = aws_key_pair.ssh_key_pair.key_name
+  subnet_id              = aws_subnet.public_subnet_1.id
+  vpc_security_group_ids = [aws_security_group.strapi_server_sg.id]
+  
+  user_data = templatefile("init.tftpl", {
+    rds_hostname      = "${aws_db_instance.strapi_db.address}",
+    rds_db_name       = "${var.db_name}",
+    rds_username      = "${var.db_user_name}",
+    db_password       = "${var.db_password}",
+    aws_region        = "${var.aws_region}",
+    s3_name           = "${aws_s3_bucket.strapi_storage.bucket}",
+    aws_access_key_id = "${var.aws_access_key_id}",
+    aws_access_secret = "${var.aws_access_secret}",
+  })
   tags = {
     name = "strapi"
   }
+  depends_on = [aws_db_instance.strapi_db, aws_s3_bucket.strapi_storage]
 }
 
 resource "aws_eip" "strapi_eip" {

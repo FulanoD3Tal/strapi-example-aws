@@ -17,8 +17,7 @@ resource "aws_security_group" "strapi_rds_sg" {
 resource "aws_db_subnet_group" "strapi_rds_subnet_group" {
   name        = "strapi-rds-subnet-group"
   description = "RDS subnet group for tutorial"
-
-  subnet_ids = [aws_subnet.private_subnet_1, aws_subnet.private_subnet_2]
+  subnet_ids = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
 }
 
 
