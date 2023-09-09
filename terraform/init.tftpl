@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Update the package repositories
+apt update
+
+# Install necessary packages
+apt install -y nginx
+
+# Configure Nginx
+
+# Start Nginx service
+systemctl start nginx
+
+#Install Node.js
+apt install -y ca-certificates curl gnupg
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+NODE_MAJOR=18
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+apt update
+apt install nodejs -y
+
+#Set Enviroment Variables
+echo "export HOST=0.0.0.0">> /etc/environment
+echo "export PORT=1337" >> /etc/environment
+echo "export APP_KEYS=UTKyc/UqHS9sT7mlcOOvcQ==,/M3ncllabtIQagO+/NjIKA==,lW3e1ICYYKUwgpw18dtG5g==,m7976UR6gUIlshLmb4exww==" >> /etc/environment
+echo "export API_TOKEN_SALT="$(openssl rand -base64 32)"" >> /etc/environment
+echo "export ADMIN_JWT_SECRET="$(openssl rand -base64 32)"" >> /etc/environment
+echo "export TRANSFER_TOKEN_SALT="$(openssl rand -base64 32)"" >> /etc/environment
+
+# Database
+echo "export DATABASE_CLIENT=postgres" >> /etc/environment
+echo "export JWT_SECRET="$(openssl rand -base64 32)"" >> /etc/environment
+# 
+#AWS
+echo "export DATABASE_HOST=${rds_hostname}" >> /etc/environment
+echo "export DATABASE_NAME=${rds_db_name}" >> /etc/environment
+echo "export DATABASE_USERNAME=${rds_username}" >> /etc/environment
+echo "export DATABASE_PASSWORD=${db_password}" >> /etc/environment
+echo "export DATABASE_SSL=true" >> /etc/environment
+echo "export DATABASE_SSL_REJECT_UNAUTHORIZED=false" >> /etc/environment
+
+#S3 Storage
+echo "export AWS_ACCESS_KEY_ID=${aws_access_key_id}" >>/etc/environment
+echo "export AWS_ACCESS_SECRET=${aws_access_secret}" >>/etc/environment
+echo "export AWS_REGION=${aws_region}" >> /etc/environment
+echo "export AWS_BUCKET_NAME=${s3_name}" >> /etc/environment
+
+#Node
+echo "export NODE_ENV=production" >> /etc/environment
+
+
+
+
+
+
